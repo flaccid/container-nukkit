@@ -1,0 +1,14 @@
+# cached binaries
+bin/
+
+# runtime data
+logs/
+players/
+worlds/
+plugins/
+resource_packs/
+white-list.txt
+server.properties
+ops.txt
+nukkit.yml
+banned-*.json

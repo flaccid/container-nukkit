@@ -1,0 +1,23 @@
+FROM openjdk:8-jre-slim
+LABEL maintainer="Chris Fordham <chris@fordham.id.au>"
+# latest is master (commented out) which is currently outdated so using this branch
+ADD https://ci.opencollab.dev/job/NukkitX/job/Nukkit/job/1.16.100/lastSuccessfulBuild/artifact/target/nukkit-1.0-SNAPSHOT.jar /opt/nukkit/nukkit.jar
+# ADD https://ci.opencollab.dev/job/NukkitX/job/Nukkit/job/master/lastSuccessfulBuild/artifact/target/nukkit-1.0-SNAPSHOT.jar /opt/nukkit/nukkit.jar
+COPY nukkit.yml.default /etc/opt/nukkit/nukkit.yml
+RUN useradd --user-group \
+            --no-create-home \
+            --home-dir /var/opt/nukkit \
+            --shell /usr/sbin/nologin \
+              minecraft && \
+    mkdir -p /var/opt/nukkit && \
+    chown -R minecraft /opt/nukkit /var/opt/nukkit /etc/opt/nukkit/nukkit.yml && \
+    ln -sfv /etc/opt/nukkit/nukkit.yml /var/opt/nukkit/nukkit.yml && \
+    apt-get -y update && \
+    apt-get -y install lsof && \
+    rm -rf /var/lib/apt/lists/*
+USER minecraft
+VOLUME /etc/opt/nukkit /var/opt/nukkit /opt/nukkit
+EXPOSE 19132
+WORKDIR /var/opt/nukkit
+ENTRYPOINT ["java"]
+CMD ["-jar", "/opt/nukkit/nukkit.jar"]
